@@ -1,29 +1,19 @@
 class Solution {
 public:
-    int countMaxOrSubsets(vector<int>& nums) {
-        int maxOrValue = 0;
-        for (int num : nums) {
-            maxOrValue |= num;
+    int f(vector<int>&nums, int ind, int currOr, int target){
+        if(ind==nums.size()){
+            if(currOr == target) return 1;
+            else return 0;
         }
-        return countSubsets(nums, 0, 0, maxOrValue);
+        int pick = f(nums, ind+1, currOr | nums[ind], target);
+        int not_pick = f(nums, ind+1, currOr, target);
+        return pick + not_pick;
     }
 
-private:
-    int countSubsets(vector<int>& nums, int index, int currentOr,
-                     int targetOr) {
-        // Base case: reached the end of the array
-        if (index == nums.size()) {
-            return (currentOr == targetOr) ? 1 : 0;
-        }
-
-        // Don't include the current number
-        int countWithout = countSubsets(nums, index + 1, currentOr, targetOr);
-
-        // Include the current number
-        int countWith =
-            countSubsets(nums, index + 1, currentOr | nums[index], targetOr);
-
-        // Return the sum of both cases
-        return countWithout + countWith;
+    int countMaxOrSubsets(vector<int>& nums) {
+        int n = nums.size();
+        int orr = 0;
+        for(auto &x : nums) orr= orr | x;
+        return f(nums, 0, 0, orr);
     }
 };
